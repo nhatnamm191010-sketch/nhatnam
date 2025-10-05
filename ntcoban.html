@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nhận tin nhắn</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .message {
+            background-color: #e1f5fe;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .message strong {
+            color: #0277bd;
+        }
+    </style>
+</head>
+<body>
+    <h1>Nhận tin nhắn</h1>
+
+    <input type="text" id="name" placeholder="Tên của bạn">
+    <textarea id="message" rows="4" placeholder="Nhập tin nhắn..."></textarea>
+    <button onclick="sendMessage()">Gửi</button>
+
+    <div id="messages"></div>
+
+    <script>
+        function sendMessage() {
+            const name = document.getElementById('name').value.trim();
+            const message = document.getElementById('message').value.trim();
+
+            if(name === "" || message === "") {
+                alert("Vui lòng nhập tên và tin nhắn!");
+                return;
+            }
+
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            messageDiv.innerHTML = `<strong>${name}:</strong> ${message}`;
+
+            document.getElementById('messages').appendChild(messageDiv);
+
+            // Xóa ô nhập
+            document.getElementById('name').value = "";
+            document.getElementById('message').value = "";
+        }
+    </script>
+</body>
+</html>

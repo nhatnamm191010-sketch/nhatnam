@@ -1,0 +1,54 @@
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+
+function App() {
+  const [employees, setEmployees] = useState([]);
+  const [name, setName] = useState('');
+  const [role, setRole] = useState('');
+
+  const fetchEmployees = async () => {
+    const res = await axios.get('http://localhost:5000/employees');
+    setEmployees(res.data);
+  };
+
+  useEffect(() => { fetchEmployees(); }, []);
+
+  const addEmployee = async () => {
+    if(name && role) {
+      await axios.post('http://localhost:5000/employees', { name, role });
+      setName(''); setRole('');
+      fetchEmployees();
+    }
+  };
+
+  const deleteEmployee = async (id) => {
+    await axios.delete(`http://localhost:5000/employees/${id}`);
+    fetchEmployees();
+  };
+
+  return (
+    <div style={{ padding: 20 }}>
+      <h1>Employee Management</h1>
+      <input placeholder="Tên" value={name} onChange={e => setName(e.target.value)} />
+      <input placeholder="Chức vụ" value={role} onChange={e => setRole(e.target.value)} />
+      <button onClick={addEmployee}>Thêm</button>
+
+      <table border="1" style={{ marginTop: 20, width: '100%' }}>
+        <thead>
+          <tr><th>Tên</th><th>Chức vụ</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+          {employees.map(emp => (
+            <tr key={emp._id}>
+              <td>{emp.name}</td>
+              <td>{emp.role}</td>
+              <td><button onClick={() => deleteEmployee(emp._id)}>Xóa</button></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+export default App;

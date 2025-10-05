@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đồng Hồ Digital</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;/* kich thuoc tinh ca padding margin*/
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+        
+        .clock-container {
+            text-align: center;
+            background: rgba(154, 125, 125, 0.542);
+            padding: 50px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(34, 31, 31, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+        
+        .time-display {
+            font-size: 4em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            letter-spacing: 1px;
+        }
+        
+        .date-display {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+        
+        .timezone-display {
+            font-size: 1.2em;
+            opacity: 0.8;
+        }
+        
+        .format-toggle {
+            margin-top: 20px;
+        }
+        
+        .toggle-btn {
+            background: rgba(93, 89, 89, 0.2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0,3s ease;
+            margin: 0px 5px;
+        }
+        
+        .toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .toggle-btn.active {
+            background: rgba(255, 255, 255, 0.4);
+        }
+        
+        @media (max-width: 768px) {
+            .clock-container {
+                padding: 30px;
+                margin: 20px;
+            }
+            
+            .time-display {
+                font-size: 2.5em;
+            }
+            
+            .date-display {
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="clock-container">
+        <div id="timeDisplay" class="time-display"></div>
+        <div id="dateDisplay" class="date-display"></div>
+        <div id="timezoneDisplay" class="timezone-display"></div>
+        
+        <div class="format-toggle">
+            <button class="toggle-btn active" id="format24">24 Giờ</button>
+            <button class="toggle-btn" id="format12">12 Giờ</button>
+        </div>
+    </div>
+
+    <script>
+        let is24HourFormat = true;// che do hien thi am/pm or 24h
+        
+        function updateTime() {
+            const now = new Date();// time htai
+            
+            // Hiển thị giờ
+            let hours = now.getHours();//h htai
+            let minutes = now.getMinutes();//phut htai
+            let seconds = now.getSeconds();//s htai
+            let ampm = '';// thong tin am,pm
+            
+            if (!is24HourFormat) { // neu is24hourformat false
+                ampm = hours >= 12 ? ' PM' : ' AM'; //che do am or pm
+                hours = hours % 12; //lay phan h cho am,pm
+                hours = hours ? hours : 12;// dung de chuyen 0->12(0 luon false)
+            }
+            
+            const timeString = 
+                String(hours).padStart(2, '0') + ':' +// h hthi 2 so va:
+                String(minutes).padStart(2, '0') + ':' +// phut hthi 2 so va:
+                String(seconds).padStart(2, '0') + ampm;// s hthi 2 so va them ampm
+            
+            document.getElementById('timeDisplay').textContent = timeString;//gan timestring vao timedisplay
+            
+            // Hiển thị ngày
+            const options = { // dinh dang thoi gian
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            const dateString = now.toLocaleDateString('vi-VN', options);// bien now.ham ngon ngu tg('ngon ngu',object)
+            document.getElementById('dateDisplay').textContent = dateString;// gan datestring vao id'datedisplay'
+            
+            // Hiển thị timezone
+            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;// dat mui gio theo browser
+            document.getElementById('timezoneDisplay').textContent = timezone;// gan timezone vao timezonedisplay
+        }
+        
+        function toggleFormat(format) { // tao ham chua tham so format
+            is24HourFormat = format === 24;// ss t,f roi dua vao bien is24HourFormat
+            
+            // Cập nhật trạng thái button
+            document.getElementById('format24').classList.toggle('active', is24HourFormat);// is24hourformat T thi them active vao format24
+            document.getElementById('format12').classList.toggle('active', !is24HourFormat);// is24hourformat F thi them active vao format12
+            
+            updateTime();// cap nhat time ngay
+        }
+        
+        // Event listeners
+        document.getElementById('format24').addEventListener('click', () => toggleFormat(24));// click thi toggleformat(24)chay 
+        document.getElementById('format12').addEventListener('click', () => toggleFormat(12));// click thi toggleformat(12)chay
+        
+        // Cập nhật thời gian mỗi giây
+        updateTime();//cap nhat time lien tuc
+        setInterval(updateTime, 1000);// 1s chay 1 lan
+    </script>
+</body>
+</html>
